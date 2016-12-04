@@ -3,25 +3,79 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <link rel="stylesheet" href="styles.css"></link>
+    <title>Twittler</title>
   </head>
   <body>
-    <script>
+    <img src="http://rs245.pbsrc.com/albums/gg72/vgb23/Smileys/TwidlingThumbs.gif~c200">
+    <h1>Welcome to Twittler!</h1>
+        <script>
+          var singleUserTweetInfo = [];
 
-      $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
+          var showUsers = function() {
+            for(var i = 0; i < users.length; i++) {
+              var $user = $('<div>' + '@' + '<a href="#" onClick="singleUserTweets(\''+ users[i] + '\')";>' + users[i] + '</a>' + '</div>');
+              $user.appendTo(".users");
+            }
+          }
 
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
-        }
+          var singleUserTweets = function(username) {
+            $(".tweets").empty();
+            for(let i = singleUserTweetInfo.length - 1; i > 0; i--) {
+              if(singleUserTweetInfo[i].user ===  username) {   
+                var tweet = singleUserTweetInfo[i];
+                $tweet = $('<div>' + tweet.date + ' @ ' + tweet.user + ": " + tweet.tweet + '</div>');
+                $tweet.appendTo(".tweets");
+              }
+            }
+            $(".tweets").prepend('<aside class="users"></aside>')
+            showUsers();
+          }
 
-      });
+          var showTweets = function() {
+            $(".tweets").empty();
 
-    </script>
+            for(let i = streams.home.length - 1; i > 0; i--) {
+              var tweet = streams.home[i];
+              var $tweet = $('<div>' + tweet.created_at + ' @ ' + '<a href="#" onClick="singleUserTweets(\''+ tweet.user + '\')";>' + tweet.user + '</a>' + ': ' + tweet.message + '</div>');
+              $tweet.appendTo(".tweets");
+
+              singleUserTweetInfo[i] = ({
+                date: tweet.created_at,
+                user: tweet.user,
+                tweet: tweet.message
+              });
+            }
+            
+            $(".tweets").prepend('<aside class="users"></aside>')
+            showUsers();
+
+          }
+
+        </script>
+
+        <button class="newTweetsButton" onclick="showTweets()">New Tweets!</button>
+
+        <script>
+          $(document).ready(function(){
+
+            showTweets();
+            
+          });
+
+        </script>
+      <div class="tweets">
+      </div>
   </body>
 </html>
+
+<!-- /*
+window.streams = {};
+streams.home = [];
+streams.users = {};
+streams.users.shawndrost = [];
+streams.users.sharksforcheap = [];
+streams.users.mracus = [];
+streams.users.douglascalhoun = [];
+window.users = Object.keys(streams.users);
+*/ -->
